@@ -27,7 +27,7 @@ export class AuthService {
 
     private readonly tokenService: TokenService,
     private readonly refreshRepo: RefreshSessionsRepository,
-  ) {}
+  ) { }
 
   // ───────────────────────── Private helpers ─────────────────────────
 
@@ -78,7 +78,6 @@ export class AuthService {
     if (result.success) {
       const { user } = result.data as { user: UserEntity };
 
-      const refreshSessionId = crypto.randomUUID();
 
       const access = this.tokenService.signAccessToken({
         sub: user.id,
@@ -88,27 +87,33 @@ export class AuthService {
         companyId: user.companyId,
       });
 
-      const refresh = this.tokenService.signRefreshToken({
-        sub: user.id,
-        sid: refreshSessionId,
-      });
+      let refresh = null;
 
-      await this.refreshRepo.create({
-        id: refreshSessionId,
-        userId: user.id,
-        tokenHash: this.tokenService.hashToken(refresh.token),
-        expiresAt: refresh.expiresAt,
-      });
+      if (body.rememberMe) {
+        const refreshSessionId = crypto.randomUUID();
+
+        refresh = this.tokenService.signRefreshToken({
+          sub: user.id,
+          sid: refreshSessionId,
+        });
+
+        await this.refreshRepo.create({
+          id: refreshSessionId,
+          userId: user.id,
+          tokenHash: this.tokenService.hashToken(refresh.token),
+          expiresAt: refresh.expiresAt,
+        });
+      }
 
       return {
         success: 1,
         message: 'Logged in successfully',
         data: {
-          user,
+
           accessToken: access.token,
-          refreshToken: refresh.token,
+          refreshToken: refresh?.token,
           accessTokenExpiresAt: access.expiresAt,
-          refreshTokenExpiresAt: refresh.expiresAt,
+          refreshTokenExpiresAt: refresh?.expiresAt,
         },
       };
     }

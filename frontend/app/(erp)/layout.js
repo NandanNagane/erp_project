@@ -1,7 +1,7 @@
 import Header from "@/components/header";
 import { NavBreadcrumb } from "@/components/NavBreadcrumb";
 import { serverFetch } from "@/lib/api/server-fetch";
-import UserProvider from "@/lib/providers";
+import { UserProvider } from "@/lib/providers";
 
 export default async function ERPLayout({ children }) {
   const userPromise = serverFetch("/user/profile");

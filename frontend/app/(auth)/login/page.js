@@ -14,7 +14,6 @@ import logoImg from "@/assets/logo.png";
 import loginBg from "@/assets/login_page_img.png";
 import authApi from "@/lib/api/auth.api";
 import axios from "axios";
-import { useUser } from "@/lib/providers";
 
 const loginSchema = z.object({
   username: z.string().min(1, "username is required."),
@@ -25,7 +24,6 @@ const loginSchema = z.object({
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { setUser } = useUser();
 
   const {
     control,
@@ -48,10 +46,6 @@ export default function LoginPage() {
       const response = await authApi.login(data);
 
       const result = response.data?.data;
-
-      console.log("inside login page", result);
-
-      setUser(result.user);
 
       toast.success("Login successful");
       router.push("/dashboard");

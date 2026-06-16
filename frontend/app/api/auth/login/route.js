@@ -25,7 +25,6 @@ export async function POST(request) {
   const {
     accessToken,
     refreshToken,
-    user,
     accessTokenExpiresAt,
     refreshTokenExpiresAt,
   } = data.data;
@@ -49,6 +48,5 @@ export async function POST(request) {
   return Response.json({
     success: 1,
     message: "Logged in successfully",
-    data: { user },
   });
 }
