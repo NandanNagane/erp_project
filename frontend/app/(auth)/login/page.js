@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Mail, Lock, Loader2, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { login } from "@/lib/api";
+
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,9 @@ import { useState } from "react";
 
 import logoImg from "@/assets/logo.png";
 import loginBg from "@/assets/login_page_img.png";
+import authApi from "@/lib/api/auth.api";
+import axios from "axios";
+import { useUser } from "@/lib/providers";
 
 const loginSchema = z.object({
   username: z.string().min(1, "username is required."),
@@ -22,6 +25,7 @@ const loginSchema = z.object({
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useUser();
 
   const {
     control,
@@ -40,21 +44,26 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     try {
       // Call the backend login endpoint
-      const response = await login(data);
-      const result = response.data;
 
-      if (!result?.settings?.success) {
-        // Backend returned an error
-        throw new Error(result?.settings?.data?.message || "Login failed");
-      }
+      const response = await authApi.login(data);
+
+      const result = response.data?.data;
+
+      console.log("inside login page", result);
+
+      setUser(result.user);
 
       toast.success("Login successful");
-      router.push("/");
+      router.push("/dashboard");
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Invalid username or password.";
-      // setError('root.serverError', { type: 'manual', message });
-      toast.error(message);
+      let message = "Invalid username or password.";
+
+      if (axios.isAxiosError(err)) {
+        message = err.response?.data?.message || err.message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+      setError("root.serverError", { message });
     }
   };
 

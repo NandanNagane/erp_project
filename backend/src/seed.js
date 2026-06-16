@@ -24,6 +24,23 @@ const SUPER_ADMIN_USERNAME = 'superadmin';
 const SUPER_ADMIN_EMAIL = 'superadmin@example.com';
 const SUPER_ADMIN_GROUP = 'SuperAdmin';
 const DEFAULT_SUPER_ADMIN_PASSWORD = 'Admin@12345';
+const BULK_SEED_COUNT = 10;
+
+const bulkCompanies = Array.from({ length: BULK_SEED_COUNT }, (_, index) => ({
+  name: `Bulk Company ${index + 1}`,
+  code: `BULK${String(index + 1).padStart(2, '0')}`,
+}));
+
+const bulkUsers = Array.from({ length: BULK_SEED_COUNT }, (_, index) => ({
+  name: `Bulk User ${index + 1}`,
+  email: `bulkuser${index + 1}@example.com`,
+  username: `bulkuser${index + 1}`,
+  phone: null,
+  status: ACTIVE,
+  isSuperAdmin: 0,
+  dob: null,
+  lastAccessAt: null,
+}));
 
 const capabilities = [
   ['users'],
@@ -53,11 +70,53 @@ async function upsertOne(repository, where, data) {
   return repository.save(data);
 }
 
+async function seedBulkCompaniesAndUsers(manager, passwordHash) {
+  const companies = [];
+
+  for (const company of bulkCompanies) {
+    companies.push(
+      await upsertOne(
+        manager.getRepository(CompanyEntity),
+        { code: company.code },
+        {
+          name: company.name,
+          code: company.code,
+          status: ACTIVE,
+        },
+      ),
+    );
+  }
+
+  const users = [];
+
+  for (let index = 0; index < bulkUsers.length; index += 1) {
+    const user = bulkUsers[index];
+
+    users.push(
+      await upsertOne(
+        manager.getRepository(UserEntity),
+        { username: user.username },
+        {
+          companyId: companies[index].id,
+          name: user.name,
+          email: user.email,
+          username: user.username,
+          phone: user.phone,
+          passwordHash,
+          status: user.status,
+          isSuperAdmin: user.isSuperAdmin,
+          dob: user.dob,
+          lastAccessAt: user.lastAccessAt,
+        },
+      ),
+    );
+  }
+
+  return { companies, users };
+}
+
 async function seed(dataSource) {
-  const password = process.env.SUPER_ADMIN_PASSWORD ?? '12345';
-
-  console.log(password);
-
+  const password = process.env.SUPER_ADMIN_PASSWORD ?? DEFAULT_SUPER_ADMIN_PASSWORD;
   const passwordHash = await bcrypt.hash(password, 12);
 
   return dataSource.transaction(async (manager) => {
@@ -101,6 +160,9 @@ async function seed(dataSource) {
       },
     );
 
+    const { companies: bulkCompaniesRecords, users: bulkUsersRecords } =
+      await seedBulkCompaniesAndUsers(manager, passwordHash);
+
     const capabilityRecords = [];
 
     for (const capability of capabilities) {
@@ -137,6 +199,8 @@ async function seed(dataSource) {
       company,
       group,
       user,
+      bulkCompanies: bulkCompaniesRecords.length,
+      bulkUsers: bulkUsersRecords.length,
       capabilities: capabilityRecords.length,
     };
   });

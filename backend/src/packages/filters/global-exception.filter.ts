@@ -10,6 +10,8 @@ import {
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
+    console.log(exception);
+
     const ctx = host.switchToHttp();
     const res = ctx.getResponse();
 
@@ -30,7 +32,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         errors = r.errors ?? null;
       }
     }
-
     return res.status(status).json({
       success: false,
       message,

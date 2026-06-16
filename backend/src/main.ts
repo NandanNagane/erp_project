@@ -23,7 +23,8 @@ async function bootstrap() {
   });
 
   // Serve uploaded profile images statically
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  const staticPath = process.env.SERVE_STATIC_PATH || 'public/uploads';
+  app.useStaticAssets(join(__dirname, '..', staticPath), {
     prefix: '/uploads/',
   });
 

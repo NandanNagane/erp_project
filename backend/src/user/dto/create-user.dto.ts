@@ -9,7 +9,10 @@ import {
   IsDateString,
   IsInt,
   IsNumber,
+  IsEnum,
+  IsNotEmpty,
 } from 'class-validator';
+import { Role } from 'src/packages/role.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -48,4 +51,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsNumber()
   groupId?: number;
+
+  @IsNotEmpty()
+  @IsEnum(Role)
+  role: Role;
 }

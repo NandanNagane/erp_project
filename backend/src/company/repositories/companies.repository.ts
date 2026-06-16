@@ -107,7 +107,7 @@ export class CompaniesRepository {
 
   // ───────────────────────── Mutations ─────────────────────────
 
-  /** Create and persist a new company. Generates UUID automatically. */
+  /** Create and persist a new company.  */
   async createAndSave(data: Partial<CompanyEntity>): Promise<CompanyEntity> {
     const entity = this.repo.create({
       ...data,

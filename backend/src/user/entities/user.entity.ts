@@ -13,6 +13,7 @@ import {
 import { CompanyEntity } from '../../company/entities/company.entity';
 import { UserGroupEntity } from './user-group.entity';
 import { Exclude } from 'class-transformer';
+import { Role } from 'src/packages/role.enum';
 
 @Entity({ name: 'users' })
 @Index('idx_users_company_status', ['companyId', 'status'])
@@ -46,6 +47,9 @@ export class UserEntity {
   @Column({ type: 'tinyint', default: 1 })
   status: number;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  profImg: string | null;
+
   @Index('idx_users_is_super_admin')
   @Column({
     name: 'is_super_admin',
@@ -53,6 +57,16 @@ export class UserEntity {
     default: 0,
   })
   isSuperAdmin: number;
+
+  @Index('idx_users_role')
+  @Column({
+    name: 'role',
+    type: 'enum',
+    default: Role.COMPANY_EMPLOYEE,
+    enum: Role,
+  })
+  role: Role;
+
 
   @Column({ type: 'date', nullable: true })
   dob: Date | null;

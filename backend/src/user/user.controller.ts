@@ -1,32 +1,160 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  Query,
+  Req,
+  ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
+import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from '../packages/configs/multer.config';
 
-import { UserListService } from './services/user.list.service';
-import { UserDetailsService } from './services/user.details.service';
+import { UserService } from './services/user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserUpdateDto } from './dto/update-user.dto';
+import { UserListFilters } from './repositories/users.repository';
+import { TenantScope } from '../packages/interfaces/list-filter.interface';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userListService: UserListService,
-    private readonly UserDetailsService: UserDetailsService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  @Get('users-list')
-  async getUserList(@Query() query: any) {
-    return await this.userListService.startUserList(query);
+  /**
+   * Helper to extract the tenant context from the authenticated request.
+   */
+  private getScope(req: Request): TenantScope {
+    const user: any = req['user'];
+    if (!user) {
+      // Fallback or explicit throw if no guard is active on this route
+      throw new Error('User context missing. Ensure AuthGuard is applied.');
+    }
+    return {
+      companyId: user.companyId,
+      isSuperAdmin: user.isSuperAdmin === 1 || user.isSuperAdmin === true,
+      userId: user.sub,
+      role: user.role,
+    };
   }
 
-  @Get('all')
-  async getAllUsers(@Query() query: any) {
-    return await this.userListService.startGetAllUsers(query);
+  @Post('create')
+  @UseInterceptors(FileInterceptor('profImg', multerConfig))
+  async create(
+    @Req() req: Request,
+    @Body() createUserDto: CreateUserDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    const user = await this.userService.create(
+      this.getScope(req),
+      createUserDto,
+      file,
+    );
+    return {
+      success: 1,
+      message: 'User created successfully',
+      data: user,
+    };
   }
 
-  @Get('details')
-  async getUserDetails(@Query() query: any) {
-    return await this.UserDetailsService.startUserDetails(query);
+  @Get('list')
+  async findAll(@Req() req: Request, @Query() filters: UserListFilters) {
+    const result = await this.userService.findAll(this.getScope(req), filters);
+    return {
+      success: 1,
+      message: 'Users fetched successfully',
+      data: result,
+    };
   }
 
-  @Get(':id')
-  async getUserById(@Param('id') id: number) {
-    return await this.UserDetailsService.startUserDetails({ id });
+  @Get('profile')
+  async getProfile(@Req() req: Request) {
+    const { userId } = this.getScope(req);
+
+    console.log('userId insode /profile in users controller', userId);
+
+    const user = await this.userService.findById(userId);
+    return {
+      success: 1,
+      message: 'User fetched successfully',
+      data: user,
+    };
+  }
+
+  @Get('details/:id')
+  async findOne(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+    const user = await this.userService.findOne(id, this.getScope(req));
+    return {
+      success: 1,
+      message: 'User fetched successfully',
+      data: user,
+    };
+  }
+
+  @Put('update/:id')
+  @UseInterceptors(FileInterceptor('profImg', multerConfig))
+  async update(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UserUpdateDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    const user = await this.userService.update(
+      id,
+      this.getScope(req),
+      updateUserDto,
+      file,
+    );
+    return {
+      success: 1,
+      message: 'User updated successfully',
+      data: user,
+    };
+  }
+
+  @Delete('delete/:id')
+  async remove(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+    await this.userService.remove(id, this.getScope(req));
+    return {
+      success: 1,
+      message: 'User deleted successfully',
+    };
+  }
+
+  @Put('update-prof-img/:id')
+  @UseInterceptors(FileInterceptor('profImg', multerConfig))
+  async updateProfImg(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const user = await this.userService.updateProfImg(
+      id,
+      this.getScope(req),
+      file,
+    );
+    return {
+      success: 1,
+      message: 'Profile image updated successfully',
+      data: user,
+    };
+  }
+
+  @Delete('delete-prof-img/:id')
+  async deleteProfImg(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const user = await this.userService.deleteProfImg(id, this.getScope(req));
+    return {
+      success: 1,
+      message: 'Profile image deleted successfully',
+      data: user,
+    };
   }
 }

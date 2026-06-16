@@ -42,6 +42,9 @@ export class CompanyEntity {
   @Column({ type: 'tinyint', default: 1 })
   status: number;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  coverImg: string | null;
+
   @Column({
     name: 'created_by',
     type: 'bigint',

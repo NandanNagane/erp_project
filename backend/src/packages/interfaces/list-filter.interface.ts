@@ -45,6 +45,7 @@ export interface TenantScope {
   companyId: number;
   isSuperAdmin?: boolean;
   userId?: number;
+  role: string;
 }
 
 /** Helper to normalise raw pagination params with safe defaults. */

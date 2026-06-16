@@ -1,5 +1,4 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from 'src/auth/dto/login.dto';
 import { Public } from 'src/packages/decorators/public-decorator';
@@ -10,25 +9,21 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  async login(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-    @Body() body: loginDto,
-  ) {
-    return this.authService.login(req, res, body);
+  async login(@Body() body: loginDto) {
+    return this.authService.login(body);
   }
 
   @Public()
   @Post('refresh')
-  async refresh(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    return this.authService.refresh(req, res);
+  async refresh(@Headers('authorization') authHeader: string) {
+    // Expect "Bearer <refreshToken>" from the Next.js Route Handler
+    const token = authHeader?.replace('Bearer ', '') || '';
+    return this.authService.refresh(token);
   }
 
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: Response) {
-    return this.authService.logout(res);
+  async logout(@Headers('authorization') authHeader: string) {
+    const token = authHeader?.replace('Bearer ', '') || '';
+    return this.authService.logout(token);
   }
 }

@@ -16,10 +16,12 @@ export class ResponseInterceptor implements NestInterceptor {
           return result;
         }
 
+        console.log(result);
+
         return {
           success: true,
           message: result?.message ?? 'Request successful',
-          data: result?.data ?? result,
+          data: result?.data ?? result?.data.data ?? null,
           meta: result?.meta ?? null,
         };
       }),

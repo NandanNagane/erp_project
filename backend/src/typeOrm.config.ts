@@ -6,6 +6,7 @@ import { GroupEntity } from './group/entities/group.entity';
 import { CompanyEntity } from './company/entities/company.entity';
 import { CapabilityEntity } from './capability/entities/capability.entity';
 import { GroupCapabilityEntity } from './capability/entities/group-capability.entity';
+import { RefreshSessionEntity } from './auth/entities/refreshSessions.entity';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     CapabilityEntity,
     GroupCapabilityEntity,
     UserGroupEntity,
+    RefreshSessionEntity,
   ],
 
   synchronize: true,
