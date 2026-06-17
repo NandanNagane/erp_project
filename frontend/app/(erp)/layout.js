@@ -1,19 +1,18 @@
 import Header from "@/components/header";
-import { NavBreadcrumb } from "@/components/NavBreadcrumb";
 import { serverFetch } from "@/lib/api/server-fetch";
 import { UserProvider } from "@/lib/providers";
 
-export default async function ERPLayout({ children }) {
+export default async function ERPLayout({ children, breadcrumb }) {
   const userPromise = serverFetch("/user/profile");
 
   return (
     <>
       <UserProvider userPromise={userPromise}>
         <Header />
-        <nav>
-          <NavBreadcrumb />
-        </nav>
-        <main className="flex-1">{children}</main>
+        <div className="main-wrapper min-h-full bg-slate-50 flex flex-col p-6">
+          <nav>{breadcrumb}</nav>
+          <main className="flex-1">{children}</main>
+        </div>
       </UserProvider>
     </>
   );

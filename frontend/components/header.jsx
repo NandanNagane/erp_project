@@ -43,22 +43,6 @@ export default function Header() {
               type="search"
               placeholder="Search"
             />
-            <div className="flex h-full shrink-0 items-stretch border-l border-border/90">
-              <select
-                className="h-full border-0 bg-muted/70 px-3 pr-8  text-muted-foreground outline-none focus:bg-background focus:text-foreground"
-                aria-label="Search scope"
-                defaultValue="All"
-              >
-                <option>All</option>
-                <option>Products</option>
-                <option>Companies</option>
-                <option>Users</option>
-              </select>
-              <ChevronDownIcon
-                className="pointer-events-none absolute right-8 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                aria-hidden="true"
-              />
-            </div>
           </div>
         </div>
 

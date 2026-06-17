@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -16,9 +14,7 @@ import { DataTable } from "@/components/shared/listing/DataTable";
 import { DataList } from "@/components/shared/listing/DataList";
 import { DataGrid } from "@/components/shared/listing/DataGrid";
 
-export default function UserListing({ data }) {
-  const [users, setUsers] = useState(data?.users || []);
-
+export default function UserListing({ users }) {
   // --- Table Configuration ---
   const userColumns = [
     {
@@ -50,9 +46,9 @@ export default function UserListing({ data }) {
       accessorKey: "status",
       render: (row) =>
         row.status === 1 ? (
-          <span className="text-green-600 font-medium text-sm">Active</span>
+          <span className="text-green-600 font-medium text-md">Active</span>
         ) : (
-          <span className="text-red-600 font-medium text-sm">Inactive</span>
+          <span className="text-red-600 font-medium text-md">Inactive</span>
         ),
     },
     {
@@ -84,21 +80,21 @@ export default function UserListing({ data }) {
       className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-md shadow-sm hover:border-blue-200 transition-colors"
     >
       <div className="flex flex-col w-1/4">
-        <span className="text-sm text-slate-500 mb-1">User</span>
+        <span className="text-md text-slate-500 mb-1">User</span>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-primary">{user.name}</span>
+          <span className="text-md font-medium text-primary">{user.name}</span>
           <span className="text-xs text-slate-400">|</span>
-          <span className="text-sm text-primary">{user.email}</span>
+          <span className="text-md text-primary">{user.email}</span>
         </div>
       </div>
       <div className="flex flex-col w-1/4">
-        <span className="text-sm text-slate-500 mb-1">Group Role</span>
-        <span className="text-sm font-medium text-primary">
+        <span className="text-md text-slate-500 mb-1">Group Role</span>
+        <span className="text-md font-medium text-primary">
           {user.userGroups?.[0]?.group?.name || "No Group"}
         </span>
       </div>
       <div className="flex flex-col w-1/6">
-        <span className="text-sm text-slate-500 mb-1">Status</span>
+        <span className="text-md text-slate-500 mb-1">Status</span>
         <div>
           {user.status === 1 ? (
             <Badge className="bg-green-500 hover:bg-green-600 border-transparent text-white rounded-md px-3 font-normal">
@@ -113,8 +109,8 @@ export default function UserListing({ data }) {
       </div>
       <div className="flex items-center justify-between w-1/4">
         <div className="flex flex-col">
-          <span className="text-sm text-slate-500 mb-1">Company Name</span>
-          <span className="text-sm font-medium text-primary">
+          <span className="text-md text-slate-500 mb-1">Company Name</span>
+          <span className="text-md font-medium text-primary">
             {user.company?.name || "No Company"}
           </span>
         </div>
@@ -148,7 +144,7 @@ export default function UserListing({ data }) {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-medium text-primary">
+              <span className="text-md font-medium text-primary">
                 {user.name}
               </span>
               <span className="text-xs text-slate-500 max-w-[150px] truncate">
@@ -167,7 +163,7 @@ export default function UserListing({ data }) {
         <div className="flex items-end justify-between border-b border-slate-100 pb-4">
           <div className="flex flex-col">
             <span className="text-xs text-slate-500 mb-1">Group Name</span>
-            <span className="text-sm font-medium text-slate-800">
+            <span className="text-md font-medium text-slate-800">
               {user.userGroups?.[0]?.group?.name || "-"}
             </span>
           </div>
@@ -181,31 +177,31 @@ export default function UserListing({ data }) {
           </Button>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center text-sm">
+          <div className="flex justify-between items-center text-md">
             <span className="text-slate-500 text-xs w-1/3">User Name</span>
             <span className="font-medium text-slate-800 w-2/3">
               {user.username}
             </span>
           </div>
-          <div className="flex justify-between items-center text-sm">
+          <div className="flex justify-between items-center text-md">
             <span className="text-slate-500 text-xs w-1/3">Company Name</span>
             <span className="font-medium text-primary w-2/3">
               {user.company?.name || "-"}
             </span>
           </div>
-          <div className="flex justify-between items-center text-sm">
+          <div className="flex justify-between items-center text-md">
             <span className="text-slate-500 text-xs w-1/3">Phone Number</span>
             <span className="font-medium text-slate-800 w-2/3">
               {user.phone || "-"}
             </span>
           </div>
-          <div className="flex justify-between items-center text-sm">
+          <div className="flex justify-between items-center text-md">
             <span className="text-slate-500 text-xs w-1/3">Date Of Birth</span>
             <span className="font-medium text-slate-800 w-2/3">
               {user.dob ? format(new Date(user.dob), "dd/MM/yyyy") : "-"}
             </span>
           </div>
-          <div className="flex justify-between items-center text-sm">
+          <div className="flex justify-between items-center text-md">
             <span className="text-slate-500 text-xs w-1/3">Last Access</span>
             <span className="font-medium text-slate-800 w-2/3">
               {user.lastAccessAt
@@ -213,7 +209,7 @@ export default function UserListing({ data }) {
                 : "-"}
             </span>
           </div>
-          <div className="flex justify-between items-center text-sm mt-1">
+          <div className="flex justify-between items-center text-md mt-1">
             <span className="text-slate-500 text-xs w-1/3">Pin Access</span>
             <div className="w-2/3">
               {user.isSuperAdmin === 1 ? (
@@ -232,17 +228,14 @@ export default function UserListing({ data }) {
   };
 
   return (
-    <div className="flex flex-col flex-1 p-6 bg-slate-50 min-h-screen">
+    <>
       <ListingContainer
         title="Listing"
         data={users}
         tableView={<DataTable data={users} columns={userColumns} />}
         listView={<DataList data={users} renderItem={renderListRow} />}
         gridView={<DataGrid data={users} renderCard={renderGridCard} />}
-        onSync={() => {
-          toast.info("Syncing elastic data...");
-        }}
       />
-    </div>
+    </>
   );
 }

@@ -9,6 +9,8 @@ import {
 import { CheckSquare } from "lucide-react";
 
 export function DataTable({ data, columns, emptyMessage = "No data found." }) {
+  console.log(data);
+
   return (
     <div className="rounded-md border bg-white mt-4 overflow-hidden">
       <Table>
