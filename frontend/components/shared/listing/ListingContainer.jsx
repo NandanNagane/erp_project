@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Menu, LayoutList, LayoutGrid, ChevronDown } from "lucide-react";
+import CustomPagination from "./CustomPagination";
 
 export function ListingContainer({
   title = "Listing",
@@ -16,6 +17,7 @@ export function ListingContainer({
   tableView,
   listView,
   gridView,
+  pagination = null,
 
   showSync = true,
 }) {
@@ -89,43 +91,7 @@ export function ListingContainer({
       {renderView()}
 
       {/* Basic Pagination Footer */}
-      <div className="flex justify-between items-center p-3 mt-4 text-sm text-slate-600 bg-white border border-slate-200 rounded-md shadow-sm">
-        <div>
-          View{" "}
-          <span className="font-medium text-black">
-            1 - {Math.min(10, data.length)}
-          </span>{" "}
-          of <span className="font-medium text-black">{data.length}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 text-slate-400"
-            disabled
-          >
-            &lt;
-          </Button>
-          <Button
-            variant="default"
-            className="h-8 w-8 bg-blue-600 text-white px-0 hover:bg-blue-700"
-          >
-            1
-          </Button>
-          <span className="px-2 text-slate-400">...</span>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 text-slate-400"
-          >
-            &gt;
-          </Button>
-          <div className="flex items-center ml-2 cursor-pointer border px-2 py-1 rounded">
-            <span className="mr-2">10</span>
-            <ChevronDown className="size-4" />
-          </div>
-        </div>
-      </div>
+      <CustomPagination pagination={pagination} />
     </div>
   );
 }

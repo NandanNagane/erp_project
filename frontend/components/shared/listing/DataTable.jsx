@@ -22,7 +22,7 @@ export function DataTable({ data, columns, emptyMessage = "No data found." }) {
             {columns.map((col, index) => (
               <TableHead
                 key={index}
-                className={`font-medium text-slate-500 ${col.className || ""}`}
+                className={`font-medium text-lg text-slate-500 ${col.className || ""}`}
               >
                 {col.header}
               </TableHead>
@@ -31,7 +31,10 @@ export function DataTable({ data, columns, emptyMessage = "No data found." }) {
         </TableHeader>
         <TableBody>
           {data.map((row, rowIndex) => (
-            <TableRow key={row.id || rowIndex} className="hover:bg-slate-50/50">
+            <TableRow
+              key={row.id || rowIndex}
+              className="hover:bg-slate-50/50 text-lg"
+            >
               <TableCell className="text-center">
                 <div className="size-4 rounded border border-slate-300 inline-block align-middle" />
               </TableCell>

@@ -1,17 +1,17 @@
 import UserListing from "@/components/users/userListing";
 import { usersApi } from "@/lib/api/users.api";
 
-export default async function UsersPage() {
-  let users = null;
+export default async function UsersPage({ searchParams }) {
+  const { page = "1", limit = "10" } = await searchParams;
+  let response = null;
   try {
-    const res = await usersApi.getAll();
-    users = res.data?.data;
+    response = await usersApi.getAll({ page, limit });
   } catch (error) {
     console.log(error);
   }
   return (
     <>
-      <UserListing users={users} />
+      <UserListing response={response} />
     </>
   );
 }

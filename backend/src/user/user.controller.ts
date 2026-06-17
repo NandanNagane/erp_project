@@ -24,7 +24,7 @@ import { TenantScope } from '../packages/interfaces/list-filter.interface';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   /**
    * Helper to extract the tenant context from the authenticated request.
@@ -56,7 +56,7 @@ export class UserController {
       file,
     );
     return {
-      success: 1,
+      success: true,
       message: 'User created successfully',
       data: user,
     };
@@ -65,10 +65,12 @@ export class UserController {
   @Get('list')
   async findAll(@Req() req: Request, @Query() filters: UserListFilters) {
     const result = await this.userService.findAll(this.getScope(req), filters);
+
     return {
-      success: 1,
+      success: true,
       message: 'Users fetched successfully',
-      data: result,
+      data: result?.data,
+      pagination: result?.pagination,
     };
   }
 
@@ -76,11 +78,9 @@ export class UserController {
   async getProfile(@Req() req: Request) {
     const { userId } = this.getScope(req);
 
-    console.log('userId insode /profile in users controller', userId);
-
     const user = await this.userService.findById(userId);
     return {
-      success: 1,
+      success: true,
       message: 'User fetched successfully',
       data: user,
     };
@@ -90,7 +90,7 @@ export class UserController {
   async findOne(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findOne(id, this.getScope(req));
     return {
-      success: 1,
+      success: true,
       message: 'User fetched successfully',
       data: user,
     };
@@ -111,7 +111,7 @@ export class UserController {
       file,
     );
     return {
-      success: 1,
+      success: true,
       message: 'User updated successfully',
       data: user,
     };
@@ -121,7 +121,7 @@ export class UserController {
   async remove(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     await this.userService.remove(id, this.getScope(req));
     return {
-      success: 1,
+      success: true,
       message: 'User deleted successfully',
     };
   }
@@ -139,7 +139,7 @@ export class UserController {
       file,
     );
     return {
-      success: 1,
+      success: true,
       message: 'Profile image updated successfully',
       data: user,
     };
@@ -152,7 +152,7 @@ export class UserController {
   ) {
     const user = await this.userService.deleteProfImg(id, this.getScope(req));
     return {
-      success: 1,
+      success: true,
       message: 'Profile image deleted successfully',
       data: user,
     };

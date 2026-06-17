@@ -12,11 +12,11 @@ export class ResponseInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((result) => {
+        console.log("result in response interceptor", result)
         if (result && typeof result === 'object' && 'success' in result) {
           return result;
         }
 
-        console.log(result);
 
         return {
           success: true,

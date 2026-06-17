@@ -29,7 +29,7 @@ export class UserService {
     private readonly userGroupsRepo: UserGroupsRepository,
     private readonly general: GeneralUtilities,
     private readonly fileStorageService: FileStorageService,
-  ) {}
+  ) { }
 
   // ───────────────────────── CRUD Operations ─────────────────────────
 
@@ -87,6 +87,9 @@ export class UserService {
     scope: TenantScope,
     filters: UserListFilters,
   ): Promise<PaginatedResult<UserEntity>> {
+
+    console.log("control reached in findAll")
+
     return this.usersRepo.findAllByCompany(scope, filters);
   }
 

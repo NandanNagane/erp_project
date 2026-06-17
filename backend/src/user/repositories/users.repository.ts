@@ -24,7 +24,7 @@ export class UsersRepository {
   constructor(
     @InjectRepository(UserEntity)
     private readonly repo: Repository<UserEntity>,
-  ) {}
+  ) { }
 
   // ───────────────────────── List / Find ─────────────────────────
 
@@ -42,6 +42,8 @@ export class UsersRepository {
     const qb = this.baseListQuery();
 
     if (!scope.isSuperAdmin) {
+      console.log("inside scope in user repo", scope)
+
       qb.andWhere('user.company_id = :companyId', {
         companyId: scope.companyId,
       });
@@ -55,7 +57,9 @@ export class UsersRepository {
 
     qb.skip(skip).take(limit);
 
+    console.log("query in fndBycompany inside userRepo", qb.getQuery(), qb.getParameters())
     const [data, total] = await qb.getManyAndCount();
+
 
     return {
       data,

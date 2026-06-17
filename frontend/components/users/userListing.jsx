@@ -14,7 +14,7 @@ import { DataTable } from "@/components/shared/listing/DataTable";
 import { DataList } from "@/components/shared/listing/DataList";
 import { DataGrid } from "@/components/shared/listing/DataGrid";
 
-export default function UserListing({ users }) {
+export default function UserListing({ response }) {
   // --- Table Configuration ---
   const userColumns = [
     {
@@ -231,10 +231,11 @@ export default function UserListing({ users }) {
     <>
       <ListingContainer
         title="Listing"
-        data={users}
-        tableView={<DataTable data={users} columns={userColumns} />}
-        listView={<DataList data={users} renderItem={renderListRow} />}
-        gridView={<DataGrid data={users} renderCard={renderGridCard} />}
+        data={response.data}
+        tableView={<DataTable data={response.data} columns={userColumns} />}
+        listView={<DataList data={response.data} renderItem={renderListRow} />}
+        gridView={<DataGrid data={response.data} renderCard={renderGridCard} />}
+        pagination={response.pagination}
       />
     </>
   );
